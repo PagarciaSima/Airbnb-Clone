@@ -1,0 +1,33 @@
+.search {
+  .separator-pipe {
+    width: 1px;
+    height: 24px;
+    background-color: #dddddd;
+    margin: 0 8px;
+  }
+
+  .search-btn-circle {
+    background-color: #FF385C;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    margin-left: 8px;
+    margin-right: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #E31C5F;
+    }
+
+    fa-icon {
+      font-size: 12px;
+    }
+  }
+
+  button.p-button {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+}

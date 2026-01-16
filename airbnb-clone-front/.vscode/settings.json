@@ -1,0 +1,6 @@
+{
+  "scss.lint.importPath": "warning",
+  "scss.includePaths": [
+    "src/assets/scss"
+  ]
+}
