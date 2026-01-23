@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from "primeng/dynamicdialog";
@@ -7,6 +7,7 @@ import { ToolbarModule } from "primeng/toolbar";
 import { AvatarComponent } from './avatar/avatar.component';
 import { CategoryComponent } from './category/category.component';
 import { MenuItem } from 'primeng/api';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-navbar',
@@ -24,20 +25,17 @@ import { MenuItem } from 'primeng/api';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent implements OnInit {
-openNewSearch() {
-throw new Error('Method not implemented.');
-}
-openNewListing() {
-throw new Error('Method not implemented.');
-}
 
   location = "Anywhere";
   guests = "Add guests";
   dates = "Any week";
   currentMenuItems: MenuItem[] | undefined = [];
 
+  toastService: ToastService = inject(ToastService);
+
   ngOnInit(): void {
     this.fetchMenu();
+    this.toastService.send({severity:'info', summary: 'Welcome to your Airbnb App'});
   }
 
   private fetchMenu(): MenuItem[] {
@@ -51,6 +49,13 @@ throw new Error('Method not implemented.');
       }
     ]
   }
+
+  openNewSearch() {
+throw new Error('Method not implemented.');
+}
+openNewListing() {
+throw new Error('Method not implemented.');
+}
 
   //login = () => this.authService.login();
 
