@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.airbnb.airbn_clone_back.repository")
+@EnableJpaRepositories({"fr.codecake.airbnbclone.user.repository",
+    "fr.codecake.airbnbclone.listing.repository",
+    "fr.codecake.airbnbclone.booking.repository"})
 @EnableTransactionManagement
 @EnableJpaAuditing
 public class DatabseConfiguration {
