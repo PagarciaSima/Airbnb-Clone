@@ -2,9 +2,9 @@ package com.airbnb.airbn_clone_back.user.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.airbnb.airbn_clone_back.user.application.dto.ReadUserDTO;
 import com.airbnb.airbn_clone_back.user.domain.Authority;
 import com.airbnb.airbn_clone_back.user.domain.User;
-import com.airbnb.airbn_clone_back.user.dto.ReadUserDTO;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

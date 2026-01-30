@@ -1,12 +1,14 @@
-package com.airbnb.airbn_clone_back.user.dto;
+package com.airbnb.airbn_clone_back.user.application.dto;
 
 import java.util.Set;
 import java.util.UUID;
 
-public record ReadUserDTO(UUID publicId,
+public record ReadUserDTO(
+		UUID publicId,
         String firstName,
         String lastName,
         String email,
         String imageUrl,
-        Set<String> authorities) {
+        Set<String> authorities
+) {
 }
