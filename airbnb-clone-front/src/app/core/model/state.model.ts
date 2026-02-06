@@ -8,9 +8,9 @@ export class State<T, V = HttpErrorResponse> {
   status: StatusNotification;
 
   constructor(status: StatusNotification, value?: T, error?: V | HttpErrorResponse) {
+    this.status = status;
     this.value = value;
     this.error = error;
-    this.status = status;
   }
 
   static Builder<T = any, V = HttpErrorResponse>() {
