@@ -74,12 +74,22 @@ public class SecurityUtils {
     }
 
     @SuppressWarnings("unchecked")
-	private static Collection<String> getRolesFromClaims(Map<String, Object> claims) {
-        return (List<String>) claims.get(CLAIMS_NAMESPACE);
+    private static Collection<String> getRolesFromClaims(Map<String, Object> claims) {
+        Object rolesObj = claims.get(CLAIMS_NAMESPACE);
+        if (rolesObj == null) {
+            return List.of();
+        }
+        return (List<String>) rolesObj;
     }
 
     private static List<SimpleGrantedAuthority> mapRolesToGrantedAuthorities(Collection<String> roles) {
-        return roles.stream().filter(role -> role.startsWith("ROLE_")).map(SimpleGrantedAuthority::new).toList();
+        if (roles == null || roles.isEmpty()) {
+            return List.of();
+        }
+        return roles.stream()
+            .filter(role -> role.startsWith("ROLE_"))
+            .map(SimpleGrantedAuthority::new)
+            .toList();
     }
 
     public static boolean hasCurrentUserAnyOfAuthorities(String ...authorities) {
