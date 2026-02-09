@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ButtonModule } from 'primeng/button';
-import { DialogService } from "primeng/dynamicdialog";
+import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 import { MenuModule } from "primeng/menu";
 import { ToolbarModule } from "primeng/toolbar";
 import { AvatarComponent } from './avatar/avatar.component';
@@ -10,6 +10,7 @@ import { MenuItem } from 'primeng/api';
 import { ToastService } from '../toast.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { User } from '../../core/model/user.model';
+import { PropertiesCreateComponent } from '../../landlord/properties-create/properties-create.component';
 
 @Component({
   selector: 'app-navbar',
@@ -30,11 +31,14 @@ export class NavbarComponent implements OnInit {
 
   toastService = inject(ToastService);
   authService = inject(AuthService);
+  dialogService = inject(DialogService);
+
   location = "Anywhere";
   guests = "Add guests";
   dates = "Any week";
   currentMenuItems: MenuItem[] | undefined = [];
-  connectedUser: User = {email: this.authService.notConnected};
+  connectedUser: User = { email: this.authService.notConnected };
+  ref: DynamicDialogRef | undefined;
 
   constructor() {
     effect(() => {
@@ -93,8 +97,17 @@ export class NavbarComponent implements OnInit {
   openNewSearch() {
     throw new Error('Method not implemented.');
   }
-  openNewListing() {
-    throw new Error('Method not implemented.');
+  
+  openNewListing(): void {
+    this.ref = this.dialogService.open(PropertiesCreateComponent,
+      {
+        width: "60%",
+        header: "Airbnb your home",
+        closable: true,
+        focusOnShow: true,
+        modal: true,
+        showHeader: true
+      })
   }
 
   login = () => this.authService.login();
