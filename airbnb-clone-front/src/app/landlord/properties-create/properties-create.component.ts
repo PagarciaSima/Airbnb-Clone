@@ -10,7 +10,7 @@ import { PriceVO } from '../model/listing-vo.model';
 import { NewListing, CreatedListing, NewListingInfo, Description } from '../model/listing.model';
 import { NewListingPicture } from '../model/picture.model';
 import { Step } from './step.model';
-import { CategoryStepComponent } from './category-step/category-step.component';
+import { CategoryStepComponent } from './step/category-step/category-step.component';
 import { FooterStepComponent } from '../../shared/footer-step/footer-step.component';
 
 @Component({
