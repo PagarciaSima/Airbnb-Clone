@@ -93,3 +93,16 @@ h2 {
   grid-auto-rows: auto;
   gap: 25px;
 }
+
+@font-face {
+  font-family: 'NotoColorEmojiLimited';
+  unicode-range: U+1F1E6-1F1FF;
+  src: url('assets/fonts/NotoColorEmoji.ttf');
+}
+
+input.p-autocomplete-input,
+.autocomplete-airbnb .p-autocomplete-input,
+.p-autocomplete-item,
+.autocomplete-airbnb .p-autocomplete-item {
+  font-family: 'NotoColorEmojiLimited', "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI", Arial, sans-serif !important;
+}

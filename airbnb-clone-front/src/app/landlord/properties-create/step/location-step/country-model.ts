@@ -47,6 +47,15 @@ export interface Country {
   borders: string[]
   area: number
   flag: string
+  toString?: () => string;
+}
+
+// Helper to add toString to all countries after loading
+export function addCountryToString(countries: Country[]): Country[] {
+  return countries.map(c => ({
+    ...c,
+    toString: function() { return this.name.common; }
+  }));
 }
 
 export type Countries = Country[]

@@ -12,13 +12,19 @@ import { NewListingPicture } from '../model/picture.model';
 import { Step } from './step.model';
 import { CategoryStepComponent } from './step/category-step/category-step.component';
 import { FooterStepComponent } from '../../shared/footer-step/footer-step.component';
+import { LocationStepComponent } from './step/location-step/location-step.component';
+import { InfoStepComponent } from './step/info-step/info-step.component';
+import { PictureStepComponent } from './step/picture-step/picture-step.component';
 
 @Component({
   selector: 'app-properties-create',
   standalone: true,
   imports: [
     CategoryStepComponent,
-    FooterStepComponent
+    FooterStepComponent,
+    LocationStepComponent,
+    InfoStepComponent,
+    PictureStepComponent
   ],
   templateUrl: './properties-create.component.html',
   styleUrl: './properties-create.component.scss'
