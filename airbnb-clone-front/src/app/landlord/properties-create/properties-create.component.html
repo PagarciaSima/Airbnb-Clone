@@ -25,11 +25,18 @@
             </div>
         }
         @case (PHOTOS) {
-        <app-picture-step [pictures]="newListing.pictures"
-            (picturesChange)="onPictureChange($event)"
-            (stepValidityChange)="onValidityChange($event)"
-        >
-        </app-picture-step>
+            <app-picture-step [pictures]="newListing.pictures"
+                (picturesChange)="onPictureChange($event)"
+                (stepValidityChange)="onValidityChange($event)"
+            >
+            </app-picture-step>
+        }
+        @case (DESCRIPTION) {
+            <app-description-step [description]="newListing.description"
+                (descriptionChange)="onDescriptionChange($event)"
+                (stepValidityChange)="onValidityChange($event)"
+            >
+            </app-description-step>
         }
     }
 </div>
