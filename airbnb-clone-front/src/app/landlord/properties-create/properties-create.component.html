@@ -38,8 +38,15 @@
             >
             </app-description-step>
         }
+         @case (PRICE) {
+            <app-price-step [price]="newListing.price"
+                (priceChange)="onPriceChange($event)"
+                (stepValidityChange)="onValidityChange($event)"
+            ></app-price-step>
+        }
     }
 </div>
+<!-- Footer step -->
 <app-footer-step [currentStep]="currentStep"
     [isAllStepsValid]="isAllStepsValid()"
     [loading]="loadingCreation"
