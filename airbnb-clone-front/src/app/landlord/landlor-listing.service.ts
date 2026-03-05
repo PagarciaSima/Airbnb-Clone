@@ -54,7 +54,7 @@ export class LandlordListingService {
     this.http.delete<string>(`${environment.API_URL}/landlord-listing/delete`, { params })
       .subscribe({
         next: publicId => this.delete$.set(State.Builder<string>().forSuccess(publicId)),
-        error: err => this.create$.set(State.Builder<CreatedListing>().forError(err)),
+        error: err => this.delete$.set(State.Builder<string>().forError(err)),
       });
   }
 

@@ -2,9 +2,10 @@ import { HttpClient } from "@angular/common/http";
 import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 
 import { catchError, map, Observable, of, shareReplay, tap } from "rxjs";
-import { State } from '../../../core/model/state.model';
-import { Country } from './location-step/country-model';
-import { environment } from "../../../../environments/environment";
+import { environment } from "../../../../../environments/environment.development";
+import { State } from "../../../../core/model/state.model";
+import { Country } from "./country-model";
+
 
 @Injectable({
   providedIn: 'root'

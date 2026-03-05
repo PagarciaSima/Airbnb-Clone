@@ -5,7 +5,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { State } from '../../core/model/state.model';
 import { CategoryName } from '../../layout/navbar/category/category.model';
 import { ToastService } from '../../layout/toast.service';
-import { LandlordListingService } from '../landor-listing.service';
+import { LandlordListingService } from '../landlor-listing.service';
 import { PriceVO } from '../model/listing-vo.model';
 import { NewListing, CreatedListing, NewListingInfo, Description } from '../model/listing.model';
 import { NewListingPicture } from '../model/picture.model';

@@ -6,8 +6,8 @@ import {ToastService} from "../../../../../layout/toast.service";
 import {OpenStreetMapProvider} from "leaflet-geosearch";
 import L, {circle, latLng, polygon, tileLayer} from "leaflet";
 import {filter} from "rxjs";
-import { CountryService } from '../../country.service';
 import { Country } from '../country-model';
+import { CountryService } from '../country.service';
 
 @Component({
   selector: 'app-location-map',
