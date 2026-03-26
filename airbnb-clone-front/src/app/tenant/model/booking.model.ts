@@ -33,13 +33,3 @@ export interface BookedDatesDTOFromServer {
   endDate: Date,
 }
 
-
-export interface BookedListing {
-  location: string,
-  cover: DisplayPicture,
-  totalPrice: PriceVO,
-  dates: BookedDatesDTOFromServer,
-  bookingPublicId: string,
-  listingPublicId: string,
-  loading: boolean
-}

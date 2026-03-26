@@ -13,21 +13,17 @@ export class BookingService {
 
   private http = inject(HttpClient);
 
-  private createBooking$: WritableSignal<State<boolean>>
-    = signal(State.Builder<boolean>().forInit());
+  private createBooking$: WritableSignal<State<boolean>> = signal(State.Builder<boolean>().forInit());
   createBookingSig = computed(() => this.createBooking$());
 
-  private checkAvailability$: WritableSignal<State<Array<BookedDatesDTOFromClient>>>
-    = signal(State.Builder<Array<BookedDatesDTOFromClient>>().forInit());
+  private checkAvailability$: WritableSignal<State<Array<BookedDatesDTOFromClient>>> = signal(State.Builder<Array<BookedDatesDTOFromClient>>().forInit());
   checkAvailabilitySig = computed(() => this.checkAvailability$());
 
 
-  private getBookedListing$: WritableSignal<State<Array<BookedListing>>>
-    = signal(State.Builder<Array<BookedListing>>().forInit());
+  private getBookedListing$: WritableSignal<State<Array<BookedListing>>> = signal(State.Builder<Array<BookedListing>>().forInit());
   getBookedListingSig = computed(() => this.getBookedListing$());
 
-  private cancel$: WritableSignal<State<string>>
-    = signal(State.Builder<string>().forInit());
+  private cancel$: WritableSignal<State<string>> = signal(State.Builder<string>().forInit());
   cancelSig = computed(() => this.cancel$());
 
   private getBookedListingForLandlord$: WritableSignal<State<Array<BookedListing>>>
