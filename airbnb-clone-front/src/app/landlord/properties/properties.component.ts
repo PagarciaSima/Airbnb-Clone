@@ -1,4 +1,5 @@
 import {Component, effect, inject, OnDestroy, OnInit} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {ToastService} from "../../layout/toast.service";
 import {CardListing} from "../model/listing.model";
 import {CardListingComponent} from "../../shared/card-listing/card-listing.component";
@@ -20,6 +21,7 @@ export class PropertiesComponent implements OnInit, OnDestroy {
 
   landlordListingService = inject(LandlordListingService);
   toastService = inject(ToastService);
+  activatedRoute = inject(ActivatedRoute);
 
   listings: Array<CardListing> | undefined = [];
   loadingDeletion = false;
@@ -69,8 +71,12 @@ export class PropertiesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
+
   ngOnInit(): void {
-    this.fetchListings()
+    this.activatedRoute.queryParams.subscribe(params => {
+      const category = params['category'] || 'ALL';
+      this.fetchListings(category);
+    });
   }
 
   onDeleteListing(listing: CardListing): void {
@@ -78,8 +84,8 @@ export class PropertiesComponent implements OnInit, OnDestroy {
     this.landlordListingService.delete(listing.publicId);
   }
 
-  private fetchListings() {
+  private fetchListings(category?: string) {
     this.loadingFetchAll = true;
-    this.landlordListingService.getAll();
+    this.landlordListingService.getAll(category);
   }
 }

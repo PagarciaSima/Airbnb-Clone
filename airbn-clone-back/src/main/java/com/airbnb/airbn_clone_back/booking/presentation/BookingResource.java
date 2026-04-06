@@ -41,7 +41,7 @@ public class BookingResource {
         if (createState.getStatus().equals(StatusNotification.ERROR)) {
             ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, createState.getError());
             return ResponseEntity.of(problemDetail).build();
-        } else {
+        } else { 
             return ResponseEntity.ok(true);
         }
     }

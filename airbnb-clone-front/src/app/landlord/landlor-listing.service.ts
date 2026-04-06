@@ -41,8 +41,13 @@ export class LandlordListingService {
     this.create$.set(State.Builder<CreatedListing>().forInit())
   }
 
-  getAll(): void {
-    this.http.get<Array<CardListing>>(`${environment.API_URL}/landlord-listing/get-all`)
+
+  getAll(category?: string): void {
+    let params = new HttpParams();
+    if (category && category !== 'ALL') {
+      params = params.set('category', category);
+    }
+    this.http.get<Array<CardListing>>(`${environment.API_URL}/landlord-listing/get-all`, { params })
       .subscribe({
         next: listings => this.getAll$.set(State.Builder<Array<CardListing>>().forSuccess(listings)),
         error: err => this.create$.set(State.Builder<CreatedListing>().forError(err)),
