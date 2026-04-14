@@ -1,8 +1,10 @@
 <div class="my-4 flex justify-content-center align-items-center">
+  <span class="flag-icon mr-2">{{currentLocation?.flag}}</span>
   <p-autoComplete
     [styleClass]="'autocomplete-airbnb'"
     [panelStyleClass]="'country-panel'"
     [ngModel]="currentLocation"
+    (ngModelChange)="onInputChange($event)"
     (onSelect)="onLocationChange($event)"
     [suggestions]="filteredCountries"
     (completeMethod)="search($event)"

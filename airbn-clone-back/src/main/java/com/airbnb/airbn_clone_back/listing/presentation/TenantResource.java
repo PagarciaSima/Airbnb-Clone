@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.airbnb.airbn_clone_back.listing.application.TenantService;
 import com.airbnb.airbn_clone_back.listing.application.dto.DisplayCardListingDTO;
 import com.airbnb.airbn_clone_back.listing.application.dto.DisplayListingDTO;
+import com.airbnb.airbn_clone_back.listing.application.dto.SearchDTO;
 import com.airbnb.airbn_clone_back.listing.domain.BookingCategory;
 import com.airbnb.airbn_clone_back.sharedkernel.service.State;
 import com.airbnb.airbn_clone_back.sharedkernel.service.StatusNotification;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/tenant-listing")
@@ -47,9 +52,9 @@ public class TenantResource {
         }
     }
 
-//    @PostMapping("/search")
-//    public ResponseEntity<Page<DisplayCardListingDTO>> search(Pageable pageable,
-//                                                              @Valid @RequestBody SearchDTO searchDTO) {
-//        return ResponseEntity.ok(tenantService.search(pageable, searchDTO));
-//    }
+    @PostMapping("/search")
+    public ResponseEntity<Page<DisplayCardListingDTO>> search(Pageable pageable,
+                                                              @Valid @RequestBody SearchDTO searchDTO) {
+        return ResponseEntity.ok(tenantService.search(pageable, searchDTO));
+    }
 }

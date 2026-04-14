@@ -15,8 +15,7 @@ border-gray-300 shadow-1 hover:shadow-2 middle-group search flex align-items-cen
                 {{dates}}
             </button>
             <div class="separator-pipe"></div>
-            <button
-                class="p-button guest-btn border-none bg-white text-dark focus:shadow-none text-gray-400 px-3 py-2">
+            <button class="p-button guest-btn border-none bg-white text-dark focus:shadow-none text-gray-400 px-3 py-2">
                 <div>{{guests}}</div>
             </button>
             <button class="search-btn-circle flex align-items-center justify-content-center">
@@ -24,10 +23,10 @@ border-gray-300 shadow-1 hover:shadow-2 middle-group search flex align-items-cen
             </button>
         </div>
         <div class="p-toolbar-group-end sm:hidden md:flex">
-             @if(authService.isAuthenticated()){
-                <a class="p-button p-button-link" (click)="openNewListing()">Airbnb your home</a>
+            @if(authService.isAuthenticated()){
+            <a class="p-button p-button-link" (click)="openNewListing()">Airbnb your home</a>
             }
-            
+
             <p-menu #menu [model]="currentMenuItems" [popup]="true" styleClass="border-round-xl mt-1"></p-menu>
             <button (click)="menu.toggle($event)"
                 class="menu flex align-content-center

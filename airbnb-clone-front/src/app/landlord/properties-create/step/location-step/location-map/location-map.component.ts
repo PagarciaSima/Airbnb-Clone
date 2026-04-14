@@ -1,3 +1,4 @@
+
 import {Component, effect, EventEmitter, inject, input, Output} from '@angular/core';
 import {LeafletModule} from "@asymmetrik/ngx-leaflet";
 import {FormsModule} from "@angular/forms";
@@ -117,6 +118,14 @@ export class LocationMapComponent {
   search(newCompleteEvent: AutoCompleteCompleteEvent): void {
     this.filteredCountries =
       this.countries.filter(country => country.name.common.toLowerCase().startsWith(newCompleteEvent.query))
+  }
+
+  onInputChange(value: any) {
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
+      this.currentLocation = undefined;
+      this.filteredCountries = this.countries;
+      this.locationChange.emit('');
+    }
   }
 
   protected readonly filter = filter;
