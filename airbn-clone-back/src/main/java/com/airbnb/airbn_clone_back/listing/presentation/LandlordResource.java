@@ -22,6 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.airbnb.airbn_clone_back.infrastructure.config.SecurityUtils;
 import com.airbnb.airbn_clone_back.listing.LandlordService;
 import com.airbnb.airbn_clone_back.listing.application.dto.CreatedListingDTO;
@@ -40,6 +47,7 @@ import jakarta.validation.Validator;
 
 @RestController
 @RequestMapping("/api/landlord-listing")
+@Tag(name = "Landlord Listing", description = "Operations for landlords on property listings")
 public class LandlordResource {
 
 	private final LandlordService landlordService;
@@ -71,9 +79,22 @@ public class LandlordResource {
      * @return ResponseEntity with the created listing or validation errors
      * @throws IOException if an error occurs while reading the files
      */
+	@Operation(
+		summary = "Create a new listing",
+		description = "Creates a new property listing for the landlord from a multipart form request.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "Listing created successfully",
+				content = @Content(schema = @Schema(implementation = CreatedListingDTO.class))
+			),
+			@ApiResponse(responseCode = "400", description = "Validation error or bad request")
+		}
+	)
 	@PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<CreatedListingDTO> create(MultipartHttpServletRequest request,
-			@RequestPart(name = "dto") String saveListingDTOString) throws IOException {
+	public ResponseEntity<CreatedListingDTO> create(
+			@Parameter(description = "Multipart HTTP request containing images", hidden = true) MultipartHttpServletRequest request,
+			@Parameter(description = "JSON string for SaveListingDTO") @RequestPart(name = "dto") String saveListingDTOString) throws IOException {
 		List<PictureDTO> pictures = request.getFileMap().values().stream().map(mapMultipartFileToPictureDTO()).toList();
 
 		SaveListingDTO saveListingDTO = objectMapper.readValue(saveListingDTOString, SaveListingDTO.class);
@@ -108,6 +129,17 @@ public class LandlordResource {
      *
      * @return ResponseEntity with the list of DisplayCardListingDTOs
      */
+	@Operation(
+		summary = "Get all listings for landlord",
+		description = "Retrieves all property listings for the authenticated landlord.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "List of property listings",
+				content = @Content(schema = @Schema(implementation = DisplayCardListingDTO.class))
+			)
+		}
+	)
 	@GetMapping(value = "/get-all")
 	@PreAuthorize("hasAnyRole('" + SecurityUtils.ROLE_LANDLORD + "')")
 	public ResponseEntity<List<DisplayCardListingDTO>> getAll() {
@@ -122,9 +154,23 @@ public class LandlordResource {
      * @param publicId the UUID of the listing to delete
      * @return ResponseEntity with the UUID of the deleted listing, or an error status
      */
+	@Operation(
+		summary = "Delete a listing",
+		description = "Deletes a property listing for the authenticated landlord by public ID.",
+		responses = {
+			@ApiResponse(
+				responseCode = "200",
+				description = "Listing deleted successfully, returns the UUID",
+				content = @Content(schema = @Schema(implementation = UUID.class))
+			),
+			@ApiResponse(responseCode = "401", description = "Unauthorized"),
+			@ApiResponse(responseCode = "500", description = "Internal server error")
+		}
+	)
 	@DeleteMapping("/delete")
 	@PreAuthorize("hasAnyRole('" + SecurityUtils.ROLE_LANDLORD + "')")
-	public ResponseEntity<UUID> delete(@RequestParam UUID publicId) {
+	public ResponseEntity<UUID> delete(
+			@Parameter(description = "Public UUID of the listing to delete") @RequestParam UUID publicId) {
 		ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSecurityContext();
 		State<UUID, String> deleteState = landlordService.delete(publicId, connectedUser);
 		if (deleteState.getStatus().equals(StatusNotification.OK)) {

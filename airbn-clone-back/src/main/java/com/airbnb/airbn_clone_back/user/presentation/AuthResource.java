@@ -16,6 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.airbnb.airbn_clone_back.user.application.UserService;
 import com.airbnb.airbn_clone_back.user.application.dto.ReadUserDTO;
 
@@ -23,6 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "Authentication operations and current user")
 public class AuthResource {
 
     private final UserService userService;
@@ -48,9 +56,24 @@ public class AuthResource {
      * @param forceResync whether to force resynchronization with the IdP
      * @return ResponseEntity with the ReadUserDTO or an error status
      */
+    @Operation(
+        summary = "Get authenticated user",
+        description = "Retrieves the currently authenticated user. Can force resynchronization with the IdP.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Authenticated user successfully retrieved",
+                content = @Content(schema = @Schema(implementation = ReadUserDTO.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+        }
+    )
     @GetMapping("/get-authenticated-user")
     public ResponseEntity<ReadUserDTO> getAuthenticatedUser(
-            @AuthenticationPrincipal OAuth2User user, @RequestParam boolean forceResync) {
+            @Parameter(description = "Authenticated OAuth2 user", hidden = true)
+            @AuthenticationPrincipal OAuth2User user,
+            @Parameter(description = "Force resynchronization with IdP")
+            @RequestParam boolean forceResync) {
         if(user == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
@@ -67,8 +90,21 @@ public class AuthResource {
      * @param request the HTTP servlet request
      * @return ResponseEntity with a map containing the logout URL
      */
+    @Operation(
+        summary = "Logout",
+        description = "Logs out the current user and returns the IdP logout URL.",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Logout successful, URL returned",
+                content = @Content(schema = @Schema(implementation = Map.class))
+            )
+        }
+    )
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> logout(
+            @Parameter(description = "Current HTTP request", hidden = true)
+            HttpServletRequest request) {
         String issuerUri = registration.getProviderDetails().getIssuerUri();
         String originUrl = request.getHeader(HttpHeaders.ORIGIN);
         Object[] params = {issuerUri, registration.getClientId(), originUrl};
