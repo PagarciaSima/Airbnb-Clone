@@ -41,18 +41,39 @@ export class DisplayListingComponent implements OnInit, OnDestroy {
   loading = true;
 
 
+
+  /**
+   * DisplayListingComponent constructor. Initializes the listener for fetching a listing by public ID.
+   */
   constructor() {
     this.listenToFetchListing();
   }
 
+
+  /**
+   * Lifecycle hook that is called when the component is destroyed.
+   * Resets the state for fetching a listing by public ID.
+   * @returns void
+   */
   ngOnDestroy(): void {
     this.tenantListingService.resetGetOneByPublicId();
   }
 
+
+  /**
+   * Lifecycle hook that is called after data-bound properties are initialized.
+   * Extracts the listing public ID from the route and fetches the listing.
+   * @returns void
+   */
   ngOnInit(): void {
     this.extractIdParamFromRouter();
   }
 
+  /**
+   * Extracts the listing public ID from the route query parameters and fetches the listing.
+   * @private
+   * @returns void
+   */
   private extractIdParamFromRouter(): void {
     this.activatedRoute.queryParams.pipe(
       map(params => params['id'])
@@ -61,12 +82,23 @@ export class DisplayListingComponent implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Fetches the listing by its public ID and sets the loading state.
+   * @param publicId The public ID of the listing to fetch.
+   * @private
+   * @returns void
+   */
   private fetchListing(publicId: string): void {
     this.loading = true;
     this.currentPublicId = publicId;
     this.tenantListingService.getOneByPublicId(publicId);
   }
 
+  /**
+   * Listens for changes in the fetch listing state and updates the listing, category, and location.
+   * @private
+   * @returns void
+   */
   private listenToFetchListing(): void {
     effect(() => {
       const listingByPublicIdState: State<Listing> = this.tenantListingService.getOneByPublicIdSig();
@@ -94,6 +126,12 @@ export class DisplayListingComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Moves the cover picture to the first position in the pictures array.
+   * @param pictures The array of display pictures.
+   * @returns The reordered array with the cover picture first.
+   * @private
+   */
   private putCoverPictureFirst(pictures: Array<DisplayPicture>): Array<DisplayPicture> {
     const coverIndex = pictures.findIndex((picture: DisplayPicture) => picture.isCover);
     if (coverIndex) {

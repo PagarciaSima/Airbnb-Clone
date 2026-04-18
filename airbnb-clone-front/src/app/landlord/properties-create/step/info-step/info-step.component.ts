@@ -18,13 +18,27 @@ export class InfoStepComponent {
 
   infos = input.required<NewListingInfo>();
 
-  @Output()
-  infoChange = new EventEmitter<NewListingInfo>();
 
+  /**
+   * Emits the updated info when any of the controls change.
+   */
   @Output()
-  stepValidityChange = new EventEmitter<boolean>();
+  infoChange: EventEmitter<NewListingInfo> = new EventEmitter<NewListingInfo>();
 
-  onInfoChange(newValue: number, valueType: Control) {
+
+  /**
+   * Emits the validity state of the step (true if valid, false otherwise).
+   */
+  @Output()
+  stepValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  /**
+   * Handles changes to the info controls and emits the updated info and validity state.
+   * @param newValue The new value for the control.
+   * @param valueType The type of control being changed (GUESTS, BEDROOMS, BEDS, BATHS).
+   * @returns void
+   */
+  onInfoChange(newValue: number, valueType: Control): void {
     switch (valueType) {
       case "BATHS":
         this.infos().baths = {value: newValue}
@@ -44,6 +58,10 @@ export class InfoStepComponent {
     this.stepValidityChange.emit(this.validationRules());
   }
 
+  /**
+   * Validates the info step according to the business rules.
+   * @returns True if the step is valid, false otherwise.
+   */
   validationRules(): boolean {
     return this.infos().guests.value >= 1;
   }

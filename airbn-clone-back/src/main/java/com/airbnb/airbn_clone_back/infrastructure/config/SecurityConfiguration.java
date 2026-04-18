@@ -18,10 +18,21 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration class for application security settings, including HTTP security,
+ * authority mapping, and CORS configuration.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    /**
+     * Configures the HTTP security filter chain, including CSRF, OAuth2, and request authorization.
+     *
+     * @param http the HttpSecurity to modify
+     * @return the configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
@@ -43,6 +54,11 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    /**
+     * Maps user authorities, extracting roles from OIDC user claims.
+     *
+     * @return a GrantedAuthoritiesMapper for mapping user authorities
+     */
     @Bean
     GrantedAuthoritiesMapper userAuthoritiesMapper() {
         return authorities -> {
@@ -58,6 +74,11 @@ public class SecurityConfiguration {
         };
     }
     
+    /**
+     * Configures CORS settings for the application, allowing GET requests to /assets/** from localhost:4200.
+     *
+     * @return a WebMvcConfigurer with CORS mappings
+     */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

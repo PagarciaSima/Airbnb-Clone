@@ -35,6 +35,14 @@ public class TenantService {
     private final BookingService bookingService;
 
 
+    /**
+     * Constructs a TenantService with the required dependencies.
+     *
+     * @param listingRepository the listing repository
+     * @param listingMapper the listing mapper
+     * @param userService the user service
+     * @param bookingService the booking service
+     */
     public TenantService(ListingRepository listingRepository, ListingMapper listingMapper, UserService userService, BookingService bookingService) {
         this.listingRepository = listingRepository;
         this.listingMapper = listingMapper;
@@ -42,6 +50,13 @@ public class TenantService {
         this.bookingService = bookingService;
     }
 
+    /**
+     * Retrieves all listings by booking category, or all listings if category is ALL.
+     *
+     * @param pageable the pagination information
+     * @param category the booking category to filter by
+     * @return a page of DisplayCardListingDTO objects
+     */
     public Page<DisplayCardListingDTO> getAllByCategory(Pageable pageable, BookingCategory category) {
         Page<Listing> allOrBookingCategory;
         if (category == BookingCategory.ALL) {
@@ -53,6 +68,12 @@ public class TenantService {
         return allOrBookingCategory.map(listingMapper::listingToDisplayCardListingDTO);
     }
 
+    /**
+     * Retrieves a single listing by its public ID.
+     *
+     * @param publicId the UUID of the listing
+     * @return a State containing the DisplayListingDTO or an error message
+     */
     @Transactional(readOnly = true)
     public State<DisplayListingDTO, String> getOne(UUID publicId) {
         Optional<Listing> listingByPublicIdOpt = listingRepository.findByPublicId(publicId);
@@ -72,6 +93,13 @@ public class TenantService {
     }
 
 
+    /**
+     * Searches for listings matching the given search criteria and filters out booked listings.
+     *
+     * @param pageable the pagination information
+     * @param newSearch the search criteria
+     * @return a page of DisplayCardListingDTO objects that are available
+     */
     @Transactional(readOnly = true)
     public Page<DisplayCardListingDTO> search(Pageable pageable, SearchDTO newSearch) {
 

@@ -17,14 +17,35 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import com.airbnb.airbn_clone_back.user.domain.Authority;
 import com.airbnb.airbn_clone_back.user.domain.User;
 
+/**
+ * Utility class for security-related operations, such as mapping OAuth2 attributes,
+ * extracting authorities, and checking user roles.
+ */
 public class SecurityUtils {
 
+    /**
+     * Constant for the tenant role authority.
+     */
     public static final String ROLE_TENANT = "ROLE_TENANT";
+
+    /**
+     * Constant for the landlord role authority.
+     */
     public static final String ROLE_LANDLORD = "ROLE_LANDLORD";
+
+    /**
+     * Namespace for extracting roles from claims.
+     */
     public static final String CLAIMS_NAMESPACE = "https://www.codecake.fr/roles";
 
+    /**
+     * Maps OAuth2 attributes to a User domain object.
+     *
+     * @param attributes the OAuth2 attributes map
+     * @return a User object populated with the attribute values
+     */
     @SuppressWarnings("unchecked")
-	public static User mapOauth2AttributesToUser(Map<String, Object> attributes) {
+    public static User mapOauth2AttributesToUser(Map<String, Object> attributes) {
         User user = new User();
         String sub = String.valueOf(attributes.get("sub"));
 
@@ -69,10 +90,22 @@ public class SecurityUtils {
         return user;
     }
 
+    /**
+     * Extracts granted authorities from a claims map.
+     *
+     * @param claims the claims map
+     * @return a list of SimpleGrantedAuthority objects
+     */
     public static List<SimpleGrantedAuthority> extractAuthorityFromClaims(Map<String, Object> claims) {
         return mapRolesToGrantedAuthorities(getRolesFromClaims(claims));
     }
 
+    /**
+     * Retrieves the roles from the claims map using the configured namespace.
+     *
+     * @param claims the claims map
+     * @return a collection of role strings, or an empty list if none found
+     */
     @SuppressWarnings("unchecked")
     private static Collection<String> getRolesFromClaims(Map<String, Object> claims) {
         Object rolesObj = claims.get(CLAIMS_NAMESPACE);
@@ -82,6 +115,12 @@ public class SecurityUtils {
         return (List<String>) rolesObj;
     }
 
+    /**
+     * Maps a collection of role strings to a list of SimpleGrantedAuthority objects.
+     *
+     * @param roles the collection of role strings
+     * @return a list of SimpleGrantedAuthority objects, or an empty list if roles is null or empty
+     */
     private static List<SimpleGrantedAuthority> mapRolesToGrantedAuthorities(Collection<String> roles) {
         if (roles == null || roles.isEmpty()) {
             return List.of();
@@ -92,12 +131,24 @@ public class SecurityUtils {
             .toList();
     }
 
+    /**
+     * Checks if the current authenticated user has any of the specified authorities.
+     *
+     * @param authorities the authorities to check
+     * @return true if the user has any of the specified authorities, false otherwise
+     */
     public static boolean hasCurrentUserAnyOfAuthorities(String ...authorities) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (authentication != null && getAuthorities(authentication)
                 .anyMatch(authority -> Arrays.asList(authorities).contains(authority)));
     }
 
+    /**
+     * Retrieves the authorities from the given Authentication object as a stream of strings.
+     *
+     * @param authentication the Authentication object
+     * @return a stream of authority strings
+     */
     private static Stream<String> getAuthorities(Authentication authentication) {
         Collection<? extends GrantedAuthority> authorities = authentication
                 instanceof JwtAuthenticationToken jwtAuthenticationToken ?

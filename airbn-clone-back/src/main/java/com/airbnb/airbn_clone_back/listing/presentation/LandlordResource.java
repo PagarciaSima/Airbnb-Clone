@@ -50,12 +50,27 @@ public class LandlordResource {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
+	/**
+     * Constructs a LandlordResource with the required dependencies.
+     *
+     * @param landlordService the landlord service
+     * @param validator the validator for DTOs
+     * @param userService the user service
+     */
 	public LandlordResource(LandlordService landlordService, Validator validator, UserService userService) {
 		this.landlordService = landlordService;
 		this.validator = validator;
 		this.userService = userService;
 	}
 
+	/**
+     * Creates a new listing for the landlord from a multipart form request.
+     *
+     * @param request the multipart HTTP request containing images
+     * @param saveListingDTOString the JSON string for the SaveListingDTO
+     * @return ResponseEntity with the created listing or validation errors
+     * @throws IOException if an error occurs while reading the files
+     */
 	@PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<CreatedListingDTO> create(MultipartHttpServletRequest request,
 			@RequestPart(name = "dto") String saveListingDTOString) throws IOException {
@@ -88,6 +103,11 @@ public class LandlordResource {
 		};
 	}
 
+	/**
+     * Retrieves all listings for the authenticated landlord.
+     *
+     * @return ResponseEntity with the list of DisplayCardListingDTOs
+     */
 	@GetMapping(value = "/get-all")
 	@PreAuthorize("hasAnyRole('" + SecurityUtils.ROLE_LANDLORD + "')")
 	public ResponseEntity<List<DisplayCardListingDTO>> getAll() {
@@ -96,6 +116,12 @@ public class LandlordResource {
 		return ResponseEntity.ok(allProperties);
 	}
 
+	/**
+     * Deletes a listing for the authenticated landlord by public ID.
+     *
+     * @param publicId the UUID of the listing to delete
+     * @return ResponseEntity with the UUID of the deleted listing, or an error status
+     */
 	@DeleteMapping("/delete")
 	@PreAuthorize("hasAnyRole('" + SecurityUtils.ROLE_LANDLORD + "')")
 	public ResponseEntity<UUID> delete(@RequestParam UUID publicId) {

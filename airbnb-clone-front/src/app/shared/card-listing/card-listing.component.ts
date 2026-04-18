@@ -36,12 +36,21 @@ export class CardListingComponent {
   countryService = inject(CountryService);
 
 
+
+  /**
+   * CardListingComponent constructor. Initializes listeners for listing and card mode changes.
+   */
   constructor() {
     this.listenToListing();
     this.listenToCardMode();
   }
 
-  private listenToListing() {
+  /**
+   * Listens for changes to the listing input and updates the location with country information.
+   * @private
+   * @returns void
+   */
+  private listenToListing(): void {
     effect(() => {
       const listing = this.listing();
       this.countryService.getCountryByCode(listing.location)
@@ -55,7 +64,12 @@ export class CardListingComponent {
     });
   }
 
-  private listenToCardMode() {
+  /**
+   * Listens for changes to the card mode input and updates the card/booking listing references.
+   * @private
+   * @returns void
+   */
+  private listenToCardMode(): void {
     effect(() => {
       const cardMode = this.cardMode();
       if (cardMode && cardMode === "booking") {
@@ -66,15 +80,33 @@ export class CardListingComponent {
     });
   }
 
-  onDeleteListing(displayCardListingDTO: CardListing) {
+
+  /**
+   * Emits an event to delete the given card listing.
+   * @param displayCardListingDTO The card listing to delete.
+   * @returns void
+   */
+  onDeleteListing(displayCardListingDTO: CardListing): void {
     this.deleteListing.emit(displayCardListingDTO);
   }
 
-  onCancelBooking(bookedListing: BookedListing) {
+
+  /**
+   * Emits an event to cancel the given booking.
+   * @param bookedListing The booked listing to cancel.
+   * @returns void
+   */
+  onCancelBooking(bookedListing: BookedListing): void {
     this.cancelBooking.emit(bookedListing);
   }
 
-  onClickCard(publicId: string) {
+
+  /**
+   * Navigates to the listing details page for the given public ID.
+   * @param publicId The public ID of the listing.
+   * @returns void
+   */
+  onClickCard(publicId: string): void {
     this.router.navigate(['listing'],
       {queryParams: {id: publicId}});
   }

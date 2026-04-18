@@ -11,6 +11,10 @@ export class LandlordListingService {
 
   http = inject(HttpClient);
 
+
+  /**
+   * LandlordListingService constructor.
+   */
   constructor() { }
 
   private create$: WritableSignal<State<CreatedListing>> = signal(State.Builder<CreatedListing>().forInit())
@@ -22,6 +26,11 @@ export class LandlordListingService {
   private delete$: WritableSignal<State<string>> = signal(State.Builder<string>().forInit())
   deleteSig = computed(() => this.delete$());
 
+  /**
+   * Creates a new landlord listing by sending the listing data and pictures to the backend.
+   * @param newListing The new listing to create.
+   * @returns void
+   */
   create(newListing: NewListing): void {
     const formData = new FormData();
     for (let i = 0; i < newListing.pictures.length; ++i) {
@@ -37,11 +46,20 @@ export class LandlordListingService {
       });
   }
 
+  /**
+   * Resets the state of the listing creation process.
+   * @returns void
+   */
   resetListingCreation(): void {
     this.create$.set(State.Builder<CreatedListing>().forInit())
   }
 
 
+  /**
+   * Fetches all landlord listings, optionally filtered by category.
+   * @param category (Optional) The category to filter listings by.
+   * @returns void
+   */
   getAll(category?: string): void {
     let params = new HttpParams();
     if (category && category !== 'ALL') {
@@ -54,6 +72,11 @@ export class LandlordListingService {
       });
   }
 
+  /**
+   * Deletes a landlord listing by its public ID.
+   * @param publicId The public ID of the listing to delete.
+   * @returns void
+   */
   delete(publicId: string): void {
     const params = new HttpParams().set("publicId", publicId);
     this.http.delete<string>(`${environment.API_URL}/landlord-listing/delete`, { params })
@@ -63,7 +86,11 @@ export class LandlordListingService {
       });
   }
 
-  resetDelete() {
+  /**
+   * Resets the state of the delete operation.
+   * @returns void
+   */
+  resetDelete(): void {
     this.delete$.set(State.Builder<string>().forInit());
   }
 }

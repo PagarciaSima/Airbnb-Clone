@@ -23,6 +23,10 @@ export class AuthService {
 
   fetchUser: Signal<State<User, HttpErrorResponse>> = computed((): State<User, HttpErrorResponse> => this.fetchUser$());
 
+  /**
+   * Fetches the authenticated user from the backend and updates the fetchUser$ signal.
+   * @param forceResync Whether to force resynchronization with the backend.
+   */
   fetch(forceResync: boolean): void {
     this.fetchHttpUser(forceResync)
       .subscribe({
@@ -37,6 +41,10 @@ export class AuthService {
       })
   }
 
+  /**
+   * Checks if the user is authenticated.
+   * @returns True if the user is authenticated, false otherwise.
+   */
   isAuthenticated(): boolean {
     if (this.fetchUser$().value) {
       return this.fetchUser$().value!.email !== this.notConnected;
@@ -45,11 +53,21 @@ export class AuthService {
     }
   }
 
+  /**
+   * Makes an HTTP request to fetch the authenticated user from the backend.
+   * @param forceResync Whether to force resynchronization with the backend.
+   * @returns An Observable emitting the authenticated user.
+   */
   fetchHttpUser(forceResync: boolean): Observable<User> {
     const params = new HttpParams().set('forceResync', forceResync);
     return this.http.get<User>(`${environment.API_URL}/auth/get-authenticated-user`, { params })
   }
 
+  /**
+   * Checks if the authenticated user has any of the specified authorities.
+   * @param authorities The authority or list of authorities to check.
+   * @returns True if the user has any of the specified authorities, false otherwise.
+   */
   hasAnyAuthority(authorities: string[] | string): boolean {
     if (this.fetchUser$().value!.email === this.notConnected) {
       return false;
@@ -61,10 +79,16 @@ export class AuthService {
       .some((authority: string) => authorities.includes(authority));
   }
 
+  /**
+   * Redirects the user to the OAuth2 login page.
+   */
   login(): void {
     location.href = `${location.origin}${this.location.prepareExternalUrl("oauth2/authorization/okta")}`;
   }
 
+  /**
+   * Logs out the user by calling the backend and redirects to the logout URL.
+   */
   logout(): void {
     this.http.post(`${environment.API_URL}/auth/logout`, {})
       .subscribe({

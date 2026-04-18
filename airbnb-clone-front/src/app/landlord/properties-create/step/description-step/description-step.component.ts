@@ -15,27 +15,54 @@ export class DescriptionStepComponent {
 
   description = input.required<Description>();
 
-  @Output()
-  descriptionChange = new EventEmitter<Description>();
 
+  /**
+   * Emits the updated description when the title or description changes.
+   */
   @Output()
-  stepValidityChange = new EventEmitter<boolean>();
+  descriptionChange: EventEmitter<Description> = new EventEmitter<Description>();
 
+
+  /**
+   * Emits the validity state of the step (true if valid, false otherwise).
+   */
+  @Output()
+  stepValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+
+  /**
+   * Reference to the description form in the template.
+   */
   @ViewChild("formDescription")
   formDescription: NgForm | undefined;
 
-  onTitleChange(newTitle: string) {
+  /**
+   * Handles changes to the title input field.
+   * @param newTitle The new title string.
+   * @returns void
+   */
+  onTitleChange(newTitle: string): void {
     this.description().title = {value: newTitle};
     this.descriptionChange.emit(this.description());
     this.stepValidityChange.emit(this.validateForm());
   }
 
-  onDescriptionChange(newDescription: string) {
+  /**
+   * Handles changes to the description input field.
+   * @param newDescription The new description string.
+   * @returns void
+   */
+  onDescriptionChange(newDescription: string): void {
     this.description().description = {value: newDescription};
     this.descriptionChange.emit(this.description());
     this.stepValidityChange.emit(this.validateForm());
   }
 
+  /**
+   * Validates the description form.
+   * @private
+   * @returns True if the form is valid, false otherwise.
+   */
   private validateForm(): boolean {
     if (this.formDescription) {
       return this.formDescription?.valid!;

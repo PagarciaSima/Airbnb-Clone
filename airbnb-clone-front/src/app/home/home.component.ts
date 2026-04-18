@@ -41,11 +41,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   emptySearch = false;
   private searchSubscription: Subscription | undefined;
 
+  /**
+   * HomeComponent constructor. Initializes listeners for category and search updates.
+   */
   constructor() {
     this.listenToGetAllCategory();
     this.listenToSearch();
   }
 
+  /**
+   * Lifecycle hook that is called when the component is destroyed.
+   * Cleans up subscriptions and resets category state.
+   */
   ngOnDestroy(): void {
     this.tenantListingService.resetGetAllCategory();
 
@@ -58,12 +65,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Lifecycle hook that is called after data-bound properties are initialized.
+   * Starts a new search and listens for category changes.
+   */
   ngOnInit(): void {
     this.startNewSearch();
     this.listenToChangeCategory();
   }
 
-  private listenToChangeCategory() {
+  /**
+   * Subscribes to category changes and fetches listings for the selected category.
+   * @private
+   * @returns void
+   */
+  private listenToChangeCategory(): void {
     this.categoryServiceSubscription = this.categoryService.changeCategoryObs.subscribe({
       next: (category: Category) => {
         this.loading = true;
@@ -74,7 +90,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   }
 
-  private listenToGetAllCategory() {
+  /**
+   * Listens for updates to the listings by category and updates the component state accordingly.
+   * @private
+   * @returns void
+   */
+  private listenToGetAllCategory(): void {
     effect(() => {
       const categoryListingsState = this.tenantListingService.getAllByCategorySig();
       if (categoryListingsState.status === "OK") {
@@ -91,7 +112,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  private listenToSearch() {
+  /**
+   * Subscribes to search results and updates the listings and loading state.
+   * @private
+   * @returns void
+   */
+  private listenToSearch(): void {
     this.searchSubscription = this.tenantListingService.search.subscribe({
       next: searchState => {
         if (searchState.status === "OK") {
@@ -110,6 +136,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Starts a new search based on query parameters from the route.
+   * @private
+   * @returns void
+   */
   private startNewSearch(): void {
     this.activatedRoute.queryParams.pipe(
       filter(params => params['location']),
@@ -136,7 +167,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   }
 
-  onResetSearchFilter() {
+  /**
+   * Resets the search filter to the default category and updates the listings view.
+   * @returns void
+   */
+  onResetSearchFilter(): void {
     this.router.navigate(["/"], {
       queryParams: {"category": this.categoryService.getCategoryByDefault().technicalName}
     });

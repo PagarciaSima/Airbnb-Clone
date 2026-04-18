@@ -38,20 +38,41 @@ export class BookDateComponent implements OnInit, OnDestroy {
   minDate = new Date();
   bookedDates = new Array<Date>();
 
+
+  /**
+   * BookDateComponent constructor. Initializes listeners for checking available dates and booking creation.
+   */
   constructor() {
     this.listenToCheckAvailableDate();
     this.listenToCreateBooking()
   }
 
+
+  /**
+   * Lifecycle hook that is called when the component is destroyed.
+   * Resets the booking creation state.
+   * @returns void
+   */
   ngOnDestroy(): void {
     this.bookingService.resetCreateBooking();
   }
 
+
+  /**
+   * Lifecycle hook that is called after data-bound properties are initialized.
+   * Checks the availability of the listing for booking.
+   * @returns void
+   */
   ngOnInit(): void {
     this.bookingService.checkAvailability(this.listingPublicId());
   }
 
-  onDateChange(newBookingDates: Array<Date>) {
+  /**
+   * Handles changes to the selected booking dates and calculates the total price.
+   * @param newBookingDates The new array of selected booking dates.
+   * @returns void
+   */
+  onDateChange(newBookingDates: Array<Date>): void {
     this.bookingDates = newBookingDates;
     if (this.validateMakeBooking()) {
       const startBookingDateDayJS = dayjs(newBookingDates[0]);
@@ -62,7 +83,11 @@ export class BookDateComponent implements OnInit, OnDestroy {
     }
   }
 
-  validateMakeBooking() {
+  /**
+   * Validates if a booking can be made based on the selected dates and authentication state.
+   * @returns True if booking is valid, false otherwise.
+   */
+  validateMakeBooking(): boolean {
     return this.bookingDates.length === 2
       && this.bookingDates[0] !== null
       && this.bookingDates[1] !== null
@@ -70,7 +95,11 @@ export class BookDateComponent implements OnInit, OnDestroy {
       && this.authService.isAuthenticated();
   }
 
-  onNewBooking() {
+  /**
+   * Creates a new booking with the selected dates and listing.
+   * @returns void
+   */
+  onNewBooking(): void {
     const newBooking: CreateBooking = {
       listingPublicId: this.listingPublicId(),
       startDate: this.bookingDates[0],
@@ -79,7 +108,12 @@ export class BookDateComponent implements OnInit, OnDestroy {
     this.bookingService.create(newBooking);
   }
 
-  private listenToCheckAvailableDate() {
+  /**
+   * Listens for changes in the check availability state and updates the booked dates.
+   * @private
+   * @returns void
+   */
+  private listenToCheckAvailableDate(): void {
     effect(() => {
       const checkAvailabilityState = this.bookingService.checkAvailabilitySig();
       if (checkAvailabilityState.status === "OK") {
@@ -92,6 +126,12 @@ export class BookDateComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Maps an array of booked date DTOs to an array of Date objects.
+   * @param bookedDatesDTOFromClients The array of booked date DTOs from the client.
+   * @returns An array of booked Date objects.
+   * @private
+   */
   private mapBookedDatesToDate(bookedDatesDTOFromClients: Array<BookedDatesDTOFromClient>): Array<Date> {
     const bookedDates = new Array<Date>();
     for (let bookedDate of bookedDatesDTOFromClients) {
@@ -100,7 +140,13 @@ export class BookDateComponent implements OnInit, OnDestroy {
     return bookedDates;
   }
 
-  private getDatesInRange(bookedDate: BookedDatesDTOFromClient) {
+  /**
+   * Returns all dates in the range between the start and end date of a booking.
+   * @param bookedDate The booked date DTO containing the range.
+   * @returns An array of Date objects in the range.
+   * @private
+   */
+  private getDatesInRange(bookedDate: BookedDatesDTOFromClient): Array<Date> {
     const dates = new Array<Date>();
 
     let currentDate = bookedDate.startDate;
@@ -112,7 +158,12 @@ export class BookDateComponent implements OnInit, OnDestroy {
     return dates;
   }
 
-  private listenToCreateBooking() {
+  /**
+   * Listens for changes in the booking creation state and handles success or error notifications.
+   * @private
+   * @returns void
+   */
+  private listenToCreateBooking(): void {
     effect(() => {
       const createBookingState = this.bookingService.createBookingSig();
       if (createBookingState.status === "OK") {

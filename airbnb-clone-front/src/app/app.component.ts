@@ -24,15 +24,32 @@ export class AppComponent implements OnInit {
   toastService = inject(ToastService);
   messageService = inject(MessageService);
 
+
+  /**
+   * Lifecycle hook that is called after data-bound properties are initialized.
+   * Initializes FontAwesome icons and sets up the toast service listener.
+   * @returns void
+   */
   ngOnInit(): void {
     this.initFontAwesomeIcons();
     this.listenToastService();
   }
 
-  initFontAwesomeIcons() {
+
+  /**
+   * Adds the FontAwesome icons to the icon library.
+   * @returns void
+   */
+  initFontAwesomeIcons(): void {
     this.faIconLibrary.addIcons(...fontAwesomeIcons);
   }
 
+
+  /**
+   * Listens for new toast messages from the ToastService and displays them using the MessageService.
+   * @private
+   * @returns void
+   */
   private listenToastService(): void {
     this.toastService.sendSub.subscribe({
       next: (newMessagge) => {

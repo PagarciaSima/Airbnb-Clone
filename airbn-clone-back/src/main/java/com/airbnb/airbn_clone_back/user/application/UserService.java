@@ -23,11 +23,23 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    /**
+     * Constructs a UserService with the required dependencies.
+     *
+     * @param userRepository the user repository
+     * @param userMapper the user mapper
+     */
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
 
+
+    /**
+     * Retrieves the authenticated user from the security context and returns their DTO.
+     *
+     * @return the ReadUserDTO of the authenticated user
+     */
     @Transactional(readOnly = true)
     public ReadUserDTO getAuthenticatedUserFromSecurityContext() {
         OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -35,12 +47,25 @@ public class UserService {
         return getByEmail(user.getEmail()).orElseThrow();
     }
 
+
+    /**
+     * Retrieves a user by their email address.
+     *
+     * @param email the user's email address
+     * @return an Optional containing the ReadUserDTO if found, or empty otherwise
+     */
     @Transactional(readOnly = true)
     public Optional<ReadUserDTO> getByEmail(String email) {
         Optional<User> oneByEmail = userRepository.findOneByEmail(email);
         return oneByEmail.map(userMapper::readUserDTOToUser);
     }
 
+    /**
+     * Synchronizes the user with the identity provider (IdP) based on the OAuth2User attributes.
+     *
+     * @param oAuth2User the OAuth2User from the IdP
+     * @param forceResync whether to force resynchronization even if not modified
+     */
     public void syncWithIdp(OAuth2User oAuth2User, boolean forceResync) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         User user = SecurityUtils.mapOauth2AttributesToUser(attributes);
@@ -76,6 +101,13 @@ public class UserService {
         }
     }
 
+
+    /**
+     * Retrieves a user by their public UUID.
+     *
+     * @param publicId the user's public UUID
+     * @return an Optional containing the ReadUserDTO if found, or empty otherwise
+     */
     public Optional<ReadUserDTO> getByPublicId(UUID publicId) {
         Optional<User> oneByPublicId = userRepository.findOneByPublicId(publicId);
         return oneByPublicId.map(userMapper::readUserDTOToUser);

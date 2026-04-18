@@ -19,17 +19,34 @@ export class SearchDateComponent {
   searchDateRaw: Date[] = new Array<Date>();
   minDate: Date = new Date();
 
+
+  /**
+   * Emits the updated booking dates when the date selection changes.
+   */
   @Output()
   datesChange: EventEmitter<BookedDatesDTOFromServer> = new EventEmitter<BookedDatesDTOFromServer>();
 
+
+  /**
+   * Emits the validity state of the step (true if valid, false otherwise).
+   */
   @Output()
   stepValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+
+  /**
+   * SearchDateComponent constructor. Restores the previous date selection if available.
+   */
   constructor() {
     this.restorePreviousDate();
   }
 
-  onDateChange(newBookingDate: Date[]) {
+  /**
+   * Handles changes to the date selection and emits the new dates if valid.
+   * @param newBookingDate The new array of selected dates.
+   * @returns void
+   */
+  onDateChange(newBookingDate: Date[]): void {
     this.searchDateRaw = newBookingDate;
     const isDateValid = this.validateDateSearch();
     this.stepValidityChange.emit(isDateValid);
@@ -43,14 +60,24 @@ export class SearchDateComponent {
     }
   }
 
-  private validateDateSearch() {
+  /**
+   * Validates the selected dates for the search step.
+   * @private
+   * @returns True if the date selection is valid, false otherwise.
+   */
+  private validateDateSearch(): boolean {
     return this.searchDateRaw.length === 2
       && this.searchDateRaw[0] !== null
       && this.searchDateRaw[1] !== null
       && this.searchDateRaw[0].getDate() !== this.searchDateRaw[1].getDate()
   }
 
-  private restorePreviousDate() {
+  /**
+   * Restores the previously selected dates from the input signal if available.
+   * @private
+   * @returns void
+   */
+  private restorePreviousDate(): void {
     effect(() => {
       if (this.dates()) {
         this.searchDateRaw[0] = this.dates().startDate;

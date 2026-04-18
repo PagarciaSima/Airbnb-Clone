@@ -24,9 +24,19 @@ export class TenantListingService {
   private search$: Subject<State<Page<CardListing>>> = new Subject<State<Page<CardListing>>>();
   search = this.search$.asObservable();
 
+
+  /**
+   * TenantListingService constructor.
+   */
   constructor() { }
 
-  getAllByCategory(pageRequest: Pagination, category: CategoryName) : void {
+  /**
+   * Fetches all listings by category with pagination.
+   * @param pageRequest The pagination options.
+   * @param category The category name to filter listings.
+   * @returns void
+   */
+  getAllByCategory(pageRequest: Pagination, category: CategoryName): void {
     let params = createPaginationOption(pageRequest);
     params = params.set("category", category);
     this.http.get<Page<CardListing>>(`${environment.API_URL}/tenant-listing/get-all-by-category`, {params})
@@ -40,10 +50,19 @@ export class TenantListingService {
       });
   }
 
+  /**
+   * Resets the state of the getAllByCategory operation.
+   * @returns void
+   */
   resetGetAllCategory(): void {
     this.getAllByCategory$.set(State.Builder<Page<CardListing>>().forInit())
   }
 
+  /**
+   * Fetches a single listing by its public ID.
+   * @param publicId The public ID of the listing to fetch.
+   * @returns void
+   */
   getOneByPublicId(publicId: string): void {
     const params = new HttpParams().set("publicId", publicId);
     this.http.get<Listing>(`${environment.API_URL}/tenant-listing/get-one`, {params})
@@ -53,10 +72,20 @@ export class TenantListingService {
       });
   }
 
+  /**
+   * Resets the state of the getOneByPublicId operation.
+   * @returns void
+   */
   resetGetOneByPublicId(): void {
     this.getOneByPublicId$.set(State.Builder<Listing>().forInit())
   }
 
+  /**
+   * Searches for listings based on the provided search criteria and pagination options.
+   * @param newSearch The search criteria.
+   * @param pageRequest The pagination options.
+   * @returns void
+   */
   searchListing(newSearch: Search, pageRequest: Pagination): void {
     const params = createPaginationOption(pageRequest);
     this.http.post<Page<CardListing>>(`${environment.API_URL}/tenant-listing/search`, newSearch, {params})

@@ -108,21 +108,38 @@ export class PropertiesCreateComponent {
   loadingCreation = false;
 
 
+
+  /**
+   * PropertiesCreateComponent constructor. Initializes listeners for user and listing creation events.
+   */
   constructor() {
     this.listenFetchUser();
     this.listenListingCreation();
   }
 
+  /**
+   * Initiates the creation of a new listing by calling the listing service.
+   * @returns void
+   */
   createListing(): void {
     this.loadingCreation = true;
     this.listingService.create(this.newListing);
   }
 
+  /**
+   * Lifecycle hook that is called when the component is destroyed.
+   * Resets the listing creation state.
+   * @returns void
+   */
   ngOnDestroy(): void {
     this.listingService.resetListingCreation();
   }
 
-  listenFetchUser() {
+  /**
+   * Listens for changes in the user and listing creation state to navigate on success.
+   * @returns void
+   */
+  listenFetchUser(): void {
     effect(() => {
       if (this.userService.fetchUser().status === "OK"
         && this.listingService.createSig().status === "OK") {
@@ -131,7 +148,11 @@ export class PropertiesCreateComponent {
     });
   }
 
-  listenListingCreation() {
+  /**
+   * Listens for changes in the listing creation state to handle success or error.
+   * @returns void
+   */
+  listenListingCreation(): void {
     effect(() => {
       let createdListingState = this.listingService.createSig();
       if (createdListingState.status === "OK") {
@@ -142,7 +163,12 @@ export class PropertiesCreateComponent {
     });
   }
 
-  onCreateOk(createdListingState: State<CreatedListing>) {
+  /**
+   * Handles successful creation of a listing.
+   * @param createdListingState The state containing the created listing.
+   * @returns void
+   */
+  onCreateOk(createdListingState: State<CreatedListing>): void {
     this.loadingCreation = false;
     this.toastService.send({
       severity: "success", summary: "Success", detail: "Listing created successfully.",
@@ -151,54 +177,106 @@ export class PropertiesCreateComponent {
     this.userService.fetch(true);
   }
 
-  private onCreateError() {
+  /**
+   * Handles errors during the creation of a listing.
+   * @private
+   * @returns void
+   */
+  private onCreateError(): void {
     this.loadingCreation = false;
     this.toastService.send({
       severity: "error", summary: "Error", detail: "Couldn't create your listing, please try again.",
     });
   }
 
+  /**
+   * Advances to the next step in the listing creation process.
+   * @returns void
+   */
   nextStep(): void {
     if (this.currentStep.idNext !== null) {
       this.currentStep = this.steps.filter((step: Step) => step.id === this.currentStep.idNext)[0];
     }
   }
 
+  /**
+   * Returns to the previous step in the listing creation process.
+   * @returns void
+   */
   previousStep(): void {
     if (this.currentStep.idPrevious !== null) {
       this.currentStep = this.steps.filter((step: Step) => step.id === this.currentStep.idPrevious)[0];
     }
   }
 
+  /**
+   * Checks if all steps in the listing creation process are valid.
+   * @returns True if all steps are valid, false otherwise.
+   */
   isAllStepsValid(): boolean {
     return this.steps.filter(step => step.isValid).length === this.steps.length;
   }
 
+  /**
+   * Updates the listing's category when the category changes.
+   * @param newCategory The new category name.
+   * @returns void
+   */
   onCategoryChange(newCategory: CategoryName): void {
     this.newListing.category = newCategory;
   }
 
-  onValidityChange(validity: boolean) {
+  /**
+   * Updates the validity state of the current step.
+   * @param validity The validity state (true if valid, false otherwise).
+   * @returns void
+   */
+  onValidityChange(validity: boolean): void {
     this.currentStep.isValid = validity;
   }
 
-  onLocationChange(newLocation: string) {
+  /**
+   * Updates the listing's location when the location changes.
+   * @param newLocation The new location string.
+   * @returns void
+   */
+  onLocationChange(newLocation: string): void {
     this.newListing.location = newLocation;
   }
 
-  onInfoChange(newInfo: NewListingInfo) {
+  /**
+   * Updates the listing's info when the info changes.
+   * @param newInfo The new listing info.
+   * @returns void
+   */
+  onInfoChange(newInfo: NewListingInfo): void {
     this.newListing.infos = newInfo;
   }
 
-  onPictureChange(newPictures: NewListingPicture[]) {
+  /**
+   * Updates the listing's pictures when the pictures change.
+   * @param newPictures The new array of listing pictures.
+   * @returns void
+   */
+  onPictureChange(newPictures: NewListingPicture[]): void {
     this.newListing.pictures = newPictures;
   }
 
-  onDescriptionChange(newDescription: Description) {
+  /**
+   * Updates the listing's description when the description changes.
+   * @param newDescription The new description object.
+   * @returns void
+   */
+  onDescriptionChange(newDescription: Description): void {
     this.newListing.description = newDescription;
   }
 
-  onPriceChange(newPrice: PriceVO) {
+  /**
+   * Updates the listing's price when the price changes.
+   * @param newPrice The new price value object.
+   * @returns void
+   */
+  onPriceChange(newPrice: PriceVO): void {
     this.newListing.price = newPrice;
   }
 }

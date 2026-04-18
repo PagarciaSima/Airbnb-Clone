@@ -15,21 +15,44 @@ export class PriceStepComponent {
 
   price = input.required<PriceVO>();
 
-  @Output()
-  priceChange = new EventEmitter<PriceVO>();
 
+  /**
+   * Emits the updated price when the price changes.
+   */
   @Output()
-  stepValidityChange = new EventEmitter<boolean>();
+  priceChange: EventEmitter<PriceVO> = new EventEmitter<PriceVO>();
 
+
+  /**
+   * Emits the validity state of the step (true if valid, false otherwise).
+   */
+  @Output()
+  stepValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+
+  /**
+   * Reference to the price form in the template.
+   */
   @ViewChild("formPrice")
   formPrice: NgForm | undefined;
 
-  onPriceChange(newPrice: number) {
+
+  /**
+   * Handles changes to the price input field.
+   * @param newPrice The new price value.
+   * @returns void
+   */
+  onPriceChange(newPrice: number): void {
     this.priceChange.emit({value: newPrice});
     this.stepValidityChange.emit(this.validateForm());
   }
 
-  private validateForm() {
+  /**
+   * Validates the price form.
+   * @private
+   * @returns True if the form is valid, false otherwise.
+   */
+  private validateForm(): boolean {
     if (this.formPrice) {
       return this.formPrice?.valid!;
     } else {

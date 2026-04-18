@@ -16,6 +16,13 @@ import com.airbnb.airbn_clone_back.listing.domain.Listing;
 @Mapper(componentModel = "spring", uses = {ListingPictureMapper.class})
 public interface ListingMapper {
 
+
+    /**
+     * Maps a SaveListingDTO to a Listing entity.
+     *
+     * @param saveListingDTO the DTO containing listing data to save
+     * @return the Listing entity
+     */
     @Mapping(target = "landlordPublicId", ignore = true)
     @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
@@ -32,18 +39,53 @@ public interface ListingMapper {
     @Mapping(target = "price", source = "price.value")
     Listing saveListingDTOToListing(SaveListingDTO saveListingDTO);
 
+
+    /**
+     * Maps a Listing entity to a CreatedListingDTO.
+     *
+     * @param listing the Listing entity
+     * @return the CreatedListingDTO
+     */
     CreatedListingDTO listingToCreatedListingDTO(Listing listing);
 
+
+    /**
+     * Maps a list of Listing entities to a list of DisplayCardListingDTOs.
+     *
+     * @param listings the list of Listing entities
+     * @return a list of DisplayCardListingDTOs
+     */
     @Mapping(target = "cover", source = "pictures")
     List<DisplayCardListingDTO> listingToDisplayCardListingDTOs(List<Listing> listings);
 
+
+    /**
+     * Maps a Listing entity to a DisplayCardListingDTO, extracting the cover image.
+     *
+     * @param listing the Listing entity
+     * @return the DisplayCardListingDTO
+     */
     @Mapping(target = "cover", source = "pictures", qualifiedByName = "extract-cover")
     DisplayCardListingDTO listingToDisplayCardListingDTO(Listing listing);
 
+
+    /**
+     * Maps an integer price to a PriceVO object.
+     *
+     * @param price the price as an integer
+     * @return the PriceVO object
+     */
     default PriceVO mapPriceToPriceVO(int price) {
         return new PriceVO(price);
     }
 
+
+    /**
+     * Maps a Listing entity to a DisplayListingDTO.
+     *
+     * @param listing the Listing entity
+     * @return the DisplayListingDTO
+     */
     @Mapping(target = "landlord", ignore = true)
     @Mapping(target = "description.title.value", source = "title")
     @Mapping(target = "description.description.value", source = "description")
@@ -55,6 +97,13 @@ public interface ListingMapper {
     @Mapping(target = "price.value", source = "price")
     DisplayListingDTO listingToDisplayListingDTO(Listing listing);
 
+
+    /**
+     * Maps a Listing entity to a ListingCreateBookingDTO.
+     *
+     * @param listing the Listing entity
+     * @return the ListingCreateBookingDTO
+     */
     @Mapping(target = "listingPublicId", source = "publicId")
     ListingCreateBookingDTO mapListingToListingCreateBookingDTO(Listing listing);
 }

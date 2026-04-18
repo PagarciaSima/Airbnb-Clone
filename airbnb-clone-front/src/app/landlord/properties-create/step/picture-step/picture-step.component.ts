@@ -15,13 +15,26 @@ export class PictureStepComponent {
 
   pictures = input.required<Array<NewListingPicture>>();
 
-  @Output()
-  picturesChange = new EventEmitter<Array<NewListingPicture>>();
 
+  /**
+   * Emits the updated list of pictures when pictures are added or removed.
+   */
   @Output()
-  stepValidityChange = new EventEmitter<boolean>();
+  picturesChange: EventEmitter<Array<NewListingPicture>> = new EventEmitter<Array<NewListingPicture>>();
 
-  extractFileFromTarget(target: EventTarget | null) {
+
+  /**
+   * Emits the validity state of the step (true if valid, false otherwise).
+   */
+  @Output()
+  stepValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  /**
+   * Extracts the FileList from the given event target if available.
+   * @param target The event target from the file input.
+   * @returns The FileList if available, otherwise null.
+   */
+  extractFileFromTarget(target: EventTarget | null): FileList | null {
     const htmlInputTarget = target as HTMLInputElement;
     if (target === null || htmlInputTarget.files === null) {
       return null;
@@ -29,7 +42,12 @@ export class PictureStepComponent {
     return htmlInputTarget.files;
   }
 
-  onUploadNewPicture(target: EventTarget | null) {
+  /**
+   * Handles the upload of new pictures, adds them to the pictures array, and emits changes.
+   * @param target The event target from the file input.
+   * @returns void
+   */
+  onUploadNewPicture(target: EventTarget | null): void {
     const picturesFileList = this.extractFileFromTarget(target);
     if(picturesFileList !== null) {
       for(let i = 0 ; i < picturesFileList.length; i++) {
@@ -47,7 +65,12 @@ export class PictureStepComponent {
     }
   }
 
-  private validatePictures() {
+  /**
+   * Validates the number of pictures and emits the validity state.
+   * @private
+   * @returns void
+   */
+  private validatePictures(): void {
     if (this.pictures().length >= 5) {
       this.stepValidityChange.emit(true);
     } else {
@@ -55,7 +78,12 @@ export class PictureStepComponent {
     }
   }
 
-  onTrashPicture(pictureToDelete: NewListingPicture) {
+  /**
+   * Removes a picture from the pictures array and validates the remaining pictures.
+   * @param pictureToDelete The picture to remove.
+   * @returns void
+   */
+  onTrashPicture(pictureToDelete: NewListingPicture): void {
     const indexToDelete = this.pictures().findIndex(picture => picture.file.name === pictureToDelete.file.name);
     this.pictures().splice(indexToDelete, 1);
     this.validatePictures();

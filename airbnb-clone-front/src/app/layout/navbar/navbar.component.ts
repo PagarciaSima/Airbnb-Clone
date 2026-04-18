@@ -51,6 +51,10 @@ export class NavbarComponent implements OnInit {
   connectedUser: User = {email: this.authService.notConnected};
 
 
+
+  /**
+   * NavbarComponent constructor. Sets up a reactive effect to update the menu and user info on authentication changes.
+   */
   constructor() {
     effect(() => {
       if (this.authService.fetchUser().status === "OK") {
@@ -60,11 +64,22 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+
+  /**
+   * Lifecycle hook that is called after data-bound properties are initialized.
+   * Fetches the user and extracts search information from the route.
+   * @returns void
+   */
   ngOnInit(): void {
     this.authService.fetch(false);
     this.extractInformationForSearch();
   }
 
+  /**
+   * Builds the menu items for the navbar based on the user's authentication and authority.
+   * @private
+   * @returns An array of MenuItem objects for the navbar.
+   */
   private fetchMenu(): MenuItem[] {
     if (this.authService.isAuthenticated()) {
       return [
@@ -102,10 +117,18 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  /**
+   * Checks if the authenticated user has landlord authority.
+   * @returns True if the user has landlord authority, false otherwise.
+   */
   hasToBeLandlord(): boolean {
     return this.authService.hasAnyAuthority("ROLE_LANDLORD");
   }
 
+  /**
+   * Opens the dialog for creating a new property listing.
+   * @returns void
+   */
   openNewListing(): void {
     this.ref = this.dialogService.open(PropertiesCreateComponent,
       {
@@ -118,6 +141,10 @@ export class NavbarComponent implements OnInit {
       })
   }
 
+  /**
+   * Opens the dialog for searching listings.
+   * @returns void
+   */
   openNewSearch(): void {
     this.ref = this.dialogService.open(SearchComponent,
       {
@@ -130,6 +157,11 @@ export class NavbarComponent implements OnInit {
       });
   }
 
+  /**
+   * Extracts search information (location, guests, dates) from the route query parameters.
+   * @private
+   * @returns void
+   */
   private extractInformationForSearch(): void {
     this.activatedRoute.queryParams.subscribe({
       next: (params: Params) => {

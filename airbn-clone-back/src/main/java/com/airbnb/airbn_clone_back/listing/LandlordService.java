@@ -29,6 +29,15 @@ public class LandlordService {
     private final Auth0Service auth0Service;
     private final PictureService pictureService;
 
+    /**
+     * Constructs a LandlordService with the required dependencies.
+     *
+     * @param listingRepository the listing repository
+     * @param listingMapper the listing mapper
+     * @param userService the user service
+     * @param auth0Service the Auth0 service
+     * @param pictureService the picture service
+     */
     public LandlordService(ListingRepository listingRepository, ListingMapper listingMapper, UserService userService, Auth0Service auth0Service, PictureService pictureService) {
         this.listingRepository = listingRepository;
         this.listingMapper = listingMapper;
@@ -37,6 +46,12 @@ public class LandlordService {
         this.pictureService = pictureService;
     }
 
+    /**
+     * Creates a new listing for the landlord and saves associated pictures.
+     *
+     * @param saveListingDTO the DTO containing listing data to save
+     * @return the created listing as a CreatedListingDTO
+     */
     public CreatedListingDTO create(SaveListingDTO saveListingDTO) {
         Listing newListing = listingMapper.saveListingDTOToListing(saveListingDTO);
 
@@ -52,12 +67,25 @@ public class LandlordService {
         return listingMapper.listingToCreatedListingDTO(savedListing);
     }
 
+    /**
+     * Retrieves all properties for the given landlord, including cover pictures.
+     *
+     * @param landlord the landlord's user DTO
+     * @return a list of DisplayCardListingDTOs for the landlord's properties
+     */
     @Transactional(readOnly = true)
     public List<DisplayCardListingDTO> getAllProperties(ReadUserDTO landlord) {
         List<Listing> properties = listingRepository.findAllByLandlordPublicIdFetchCoverPicture(landlord.publicId());
         return listingMapper.listingToDisplayCardListingDTOs(properties);
     }
 
+    /**
+     * Deletes a listing by its public ID for the given landlord.
+     *
+     * @param publicId the UUID of the listing to delete
+     * @param landlord the landlord's user DTO
+     * @return a State indicating success or unauthorized
+     */
     @Transactional
     public State<UUID, String> delete(UUID publicId, ReadUserDTO landlord) {
         long deletedSuccessfuly = listingRepository.deleteByPublicIdAndLandlordPublicId(publicId, landlord.publicId());
@@ -68,11 +96,23 @@ public class LandlordService {
         }
     }
 
+    /**
+     * Retrieves a ListingCreateBookingDTO by the listing's public ID.
+     *
+     * @param publicId the UUID of the listing
+     * @return an Optional containing the ListingCreateBookingDTO if found
+     */
     public Optional<ListingCreateBookingDTO> getByListingPublicId(UUID publicId) {
         return listingRepository.findByPublicId(publicId)
         		.map(listingMapper::mapListingToListingCreateBookingDTO);
     }
 
+    /**
+     * Retrieves DisplayCardListingDTOs for a list of listing public IDs.
+     *
+     * @param allListingPublicIDs the list of listing UUIDs
+     * @return a list of DisplayCardListingDTOs
+     */
     public List<DisplayCardListingDTO> getCardDisplayByListingPublicId(List<UUID> allListingPublicIDs) {
         return listingRepository.findAllByPublicIdIn(allListingPublicIDs)
                 .stream()
@@ -80,6 +120,13 @@ public class LandlordService {
                 .toList();
     }
 
+    /**
+     * Retrieves a DisplayCardListingDTO by listing public ID and landlord public ID.
+     *
+     * @param listingPublicId the UUID of the listing
+     * @param landlordPublicId the UUID of the landlord
+     * @return an Optional containing the DisplayCardListingDTO if found
+     */
     @Transactional(readOnly = true)
     public Optional<DisplayCardListingDTO> getByPublicIdAndLandlordPublicId(UUID listingPublicId, UUID landlordPublicId) {
         return listingRepository.findOneByPublicIdAndLandlordPublicId(listingPublicId, landlordPublicId)

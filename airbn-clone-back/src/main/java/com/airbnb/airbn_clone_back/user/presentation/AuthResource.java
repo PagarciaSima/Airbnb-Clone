@@ -29,11 +29,25 @@ public class AuthResource {
 
     private final ClientRegistration registration;
 
+    /**
+     * Constructs an AuthResource with the required dependencies.
+     *
+     * @param userService the user service
+     * @param registration the client registration repository
+     */
     public AuthResource(UserService userService, ClientRegistrationRepository registration) {
         this.userService = userService;
         this.registration = registration.findByRegistrationId("okta");
     }
 
+
+    /**
+     * Retrieves the authenticated user, optionally forcing a resynchronization with the IdP.
+     *
+     * @param user the authenticated OAuth2User
+     * @param forceResync whether to force resynchronization with the IdP
+     * @return ResponseEntity with the ReadUserDTO or an error status
+     */
     @GetMapping("/get-authenticated-user")
     public ResponseEntity<ReadUserDTO> getAuthenticatedUser(
             @AuthenticationPrincipal OAuth2User user, @RequestParam boolean forceResync) {
@@ -46,6 +60,13 @@ public class AuthResource {
         }
     }
 
+
+    /**
+     * Logs out the current user and returns the logout URL for the IdP.
+     *
+     * @param request the HTTP servlet request
+     * @return ResponseEntity with a map containing the logout URL
+     */
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletRequest request) {
         String issuerUri = registration.getProviderDetails().getIssuerUri();

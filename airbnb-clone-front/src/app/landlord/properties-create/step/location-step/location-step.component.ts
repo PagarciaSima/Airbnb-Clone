@@ -14,13 +14,26 @@ export class LocationStepComponent {
 
   location = input.required<string>();
 
-  @Output()
-  locationChange = new EventEmitter<string>();
 
+  /**
+   * Emits the selected location (country code) when the user selects a location.
+   */
   @Output()
-  stepValidityChange = new EventEmitter<boolean>();
+  locationChange: EventEmitter<string> = new EventEmitter<string>();
 
-  onLocationChange(location: string) {
+
+  /**
+   * Emits the validity state of the step (true if valid, false otherwise).
+   */
+  @Output()
+  stepValidityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  /**
+   * Handles the selection of a new location and emits the changes.
+   * @param location The newly selected location (country code).
+   * @returns void
+   */
+  onLocationChange(location: string): void {
     this.locationChange.emit(location);
     this.stepValidityChange.emit(true);
   }

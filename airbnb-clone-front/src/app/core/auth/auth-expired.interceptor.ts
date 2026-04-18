@@ -2,7 +2,14 @@ import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from
 import { inject } from "@angular/core";
 import { tap } from "rxjs";
 import { AuthService } from "./auth.service";
-
+/**
+ * HTTP interceptor that handles expired authentication tokens.
+ * If a 401 Unauthorized error is received and the user is authenticated,
+ * redirects the user to the login page.
+ * @param req The outgoing HTTP request.
+ * @param next The next HTTP handler in the chain.
+ * @returns An Observable of the HTTP event stream.
+ */
 export const authExpired: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn

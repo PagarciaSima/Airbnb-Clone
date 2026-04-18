@@ -19,11 +19,19 @@ export class CountryService {
 
   private fetchCountry$ = new Observable<Array<Country>>();
 
+
+  /**
+   * CountryService constructor. Initializes the fetching of all countries.
+   */
   constructor() {
     this.initFetchGetAllCountries();
     this.fetchCountry$.subscribe();
   }
 
+  /**
+   * Initializes the fetching of all countries from the backend and updates the countries signal.
+   * @returns void
+   */
   initFetchGetAllCountries(): void {
     this.fetchCountry$ = this.http.get<Array<Country>>(`${environment.BACKEND_URL}/assets/countries.json`)
       .pipe(
@@ -37,6 +45,11 @@ export class CountryService {
       );
   }
 
+  /**
+   * Retrieves a country by its code (cca3) from the fetched countries list.
+   * @param code The cca3 code of the country.
+   * @returns An Observable emitting the matching Country object.
+   */
   public getCountryByCode(code: string): Observable<Country> {
     return this.fetchCountry$.pipe(
       map(countries => countries.filter(country => country.cca3 === code)),

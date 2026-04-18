@@ -30,7 +30,12 @@ export class BookingService {
     = signal(State.Builder<Array<BookedListing>>().forInit());
   getBookedListingForLandlordSig = computed(() => this.getBookedListingForLandlord$());
 
-  create(newBooking: CreateBooking) {
+  /**
+   * Creates a new booking by sending the booking data to the backend.
+   * @param newBooking The booking data to create.
+   * @returns void
+   */
+  create(newBooking: CreateBooking): void {
     this.http.post<boolean>(`${environment.API_URL}/booking/create`, newBooking)
       .subscribe({
         next: created => this.createBooking$.set(State.Builder<boolean>().forSuccess(created)),
@@ -38,6 +43,11 @@ export class BookingService {
       });
   }
 
+  /**
+   * Checks the availability of a listing for booking by its public ID.
+   * @param publicId The public ID of the listing.
+   * @returns void
+   */
   checkAvailability(publicId: string): void {
     const params = new HttpParams().set("listingPublicId", publicId);
     this.http.get<Array<BookedDatesDTOFromServer>>(`${environment.API_URL}/booking/check-availability`, {params})
@@ -51,15 +61,30 @@ export class BookingService {
   }
 
 
+
+  /**
+   * BookingService constructor.
+   */
   constructor() {
   }
 
+  /**
+   * Maps an array of booked date DTOs from the server to client format using dayjs.
+   * @private
+   * @returns A function that converts an array of BookedDatesDTOFromServer to BookedDatesDTOFromClient.
+   */
   private mapDateToDayJS = () => {
     return (bookedDates: Array<BookedDatesDTOFromServer>): Array<BookedDatesDTOFromClient> => {
       return bookedDates.map(reservedDate => this.convertDateToDayJS(reservedDate))
     }
   }
 
+  /**
+   * Converts a single booked date DTO from the server to client format using dayjs.
+   * @param dto The booked date DTO from the server.
+   * @returns The converted BookedDatesDTOFromClient object.
+   * @private
+   */
   private convertDateToDayJS<T extends BookedDatesDTOFromServer>(dto: T): BookedDatesDTOFromClient {
     return {
       ...dto,
@@ -68,10 +93,18 @@ export class BookingService {
     };
   }
 
-  resetCreateBooking() {
+  /**
+   * Resets the state of the booking creation process.
+   * @returns void
+   */
+  resetCreateBooking(): void {
     this.createBooking$.set(State.Builder<boolean>().forInit());
   }
 
+  /**
+   * Fetches all booked listings for the current user.
+   * @returns void
+   */
   getBookedListing(): void {
     this.http.get<Array<BookedListing>>(`${environment.API_URL}/booking/get-booked-listing`)
       .subscribe({
@@ -81,6 +114,13 @@ export class BookingService {
       });
   }
 
+  /**
+   * Cancels a booking by its public ID and listing public ID.
+   * @param bookingPublicId The public ID of the booking to cancel.
+   * @param listingPublicId The public ID of the listing associated with the booking.
+   * @param byLandlord Whether the cancellation is performed by the landlord.
+   * @returns void
+   */
   cancel(bookingPublicId: string, listingPublicId: string, byLandlord: boolean): void {
     const params = new HttpParams()
       .set("bookingPublicId", bookingPublicId)
@@ -93,10 +133,18 @@ export class BookingService {
       });
   }
 
+  /**
+   * Resets the state of the cancel operation.
+   * @returns void
+   */
   resetCancel(): void {
     this.cancel$.set(State.Builder<string>().forInit());
   }
 
+  /**
+   * Fetches all booked listings for the landlord.
+   * @returns void
+   */
   getBookedListingForLandlord(): void {
     this.http.get<Array<BookedListing>>(`${environment.API_URL}/booking/get-booked-listing-for-landlord`)
       .subscribe({

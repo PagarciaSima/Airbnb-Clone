@@ -34,10 +34,20 @@ export class LocationMapComponent {
 
   currentLocation: Country | undefined;
 
-  @Output()
-  locationChange = new EventEmitter<string>();
 
-  formatLabel = (country: Country) => country.flag + "   " + country.name.common;
+  /**
+   * Emits the selected location (country code) when the user selects a country.
+   */
+  @Output()
+  locationChange: EventEmitter<string> = new EventEmitter<string>();
+
+
+  /**
+   * Formats the label for displaying a country in the autocomplete dropdown.
+   * @param country The country to format.
+   * @returns The formatted label string.
+   */
+  formatLabel = (country: Country): string => country.flag + "   " + country.name.common;
 
   options = {
     layers: [
@@ -64,25 +74,49 @@ export class LocationMapComponent {
   filteredCountries: Array<Country> = [];
 
 
+
+  /**
+   * LocationMapComponent constructor. Initializes the listener for location changes.
+   */
   constructor() {
     this.listenToLocation();
   }
 
-  onMapReady(map: L.Map) {
+  /**
+   * Called when the map is ready. Stores the map instance and configures the search control.
+   * @param map The Leaflet map instance.
+   * @returns void
+   */
+  onMapReady(map: L.Map): void {
     this.map = map;
     this.configSearchControl();
   }
 
-  private configSearchControl() {
+  /**
+   * Configures the OpenStreetMap search provider for geocoding.
+   * @private
+   * @returns void
+   */
+  private configSearchControl(): void {
     this.provider = new OpenStreetMapProvider();
   }
 
-  onLocationChange(newEvent: AutoCompleteSelectEvent) {
+  /**
+   * Handles the selection of a new location from the autocomplete dropdown.
+   * @param newEvent The autocomplete select event containing the selected country.
+   * @returns void
+   */
+  onLocationChange(newEvent: AutoCompleteSelectEvent): void {
     const newCountry = newEvent.value as Country;
     this.locationChange.emit(newCountry.cca3);
   }
 
-  private listenToLocation() {
+  /**
+   * Listens for changes to the list of countries and updates the map location accordingly.
+   * @private
+   * @returns void
+   */
+  private listenToLocation(): void {
     effect(() => {
       const countriesState = this.countryService.countries();
       if (countriesState.status === "OK" && countriesState.value) {
@@ -98,7 +132,13 @@ export class LocationMapComponent {
     });
   }
 
-  private changeMapLocation(term: string) {
+  /**
+   * Changes the map view to the selected country's location.
+   * @param term The country code (cca3) to locate on the map.
+   * @private
+   * @returns void
+   */
+  private changeMapLocation(term: string): void {
     this.currentLocation = this.countries.find(country => country.cca3 === term);
     if (this.currentLocation) {
       this.provider!.search({query: this.currentLocation.name.common})
@@ -115,12 +155,22 @@ export class LocationMapComponent {
     }
   }
 
+  /**
+   * Filters the list of countries based on the autocomplete input.
+   * @param newCompleteEvent The autocomplete complete event containing the query string.
+   * @returns void
+   */
   search(newCompleteEvent: AutoCompleteCompleteEvent): void {
     this.filteredCountries =
       this.countries.filter(country => country.name.common.toLowerCase().startsWith(newCompleteEvent.query))
   }
 
-  onInputChange(value: any) {
+  /**
+   * Handles changes to the input field and resets the current location if the input is empty.
+   * @param value The new input value.
+   * @returns void
+   */
+  onInputChange(value: any): void {
     if (!value || (typeof value === 'string' && value.trim() === '')) {
       this.currentLocation = undefined;
       this.filteredCountries = this.countries;

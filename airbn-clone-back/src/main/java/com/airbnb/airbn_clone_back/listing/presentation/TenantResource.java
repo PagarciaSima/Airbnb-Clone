@@ -31,16 +31,36 @@ public class TenantResource {
     private final TenantService tenantService;
 
 
+    /**
+     * Constructs a TenantResource with the required TenantService dependency.
+     *
+     * @param tenantService the tenant service
+     */
     public TenantResource(TenantService tenantService) {
         this.tenantService = tenantService;
     }
 
+
+    /**
+     * Retrieves all listings by booking category with pagination.
+     *
+     * @param pageable the pagination information
+     * @param category the booking category to filter by
+     * @return ResponseEntity with a page of DisplayCardListingDTOs
+     */
     @GetMapping("/get-all-by-category")
     public ResponseEntity<Page<DisplayCardListingDTO>> findAllByBookingCategory(
-    		Pageable pageable,@RequestParam BookingCategory category) {
+            Pageable pageable, @RequestParam BookingCategory category) {
         return ResponseEntity.ok(tenantService.getAllByCategory(pageable, category));
     }
 
+
+    /**
+     * Retrieves a single listing by its public ID.
+     *
+     * @param publicId the UUID of the listing
+     * @return ResponseEntity with the DisplayListingDTO or an error
+     */
     @GetMapping("/get-one")
     public ResponseEntity<DisplayListingDTO> getOne(@RequestParam UUID publicId) {
         State<DisplayListingDTO, String> displayListingState = tenantService.getOne(publicId);
@@ -52,6 +72,14 @@ public class TenantResource {
         }
     }
 
+
+    /**
+     * Searches for listings matching the given search criteria and returns available listings with pagination.
+     *
+     * @param pageable the pagination information
+     * @param searchDTO the search criteria
+     * @return ResponseEntity with a page of available DisplayCardListingDTOs
+     */
     @PostMapping("/search")
     public ResponseEntity<Page<DisplayCardListingDTO>> search(Pageable pageable,
                                                               @Valid @RequestBody SearchDTO searchDTO) {

@@ -39,6 +39,12 @@ public class BookingService {
         this.landlordService = landlordService;
     }
 
+    /**
+     * Creates a new booking from the provided data.
+     *
+     * @param newBookingDTO DTO with the new booking information
+     * @return State of the operation, with success or error message
+     */
     @Transactional
     public State<Void, String> create(NewBookingDTO newBookingDTO) {
         Booking booking = bookingMapper.newBookingToBooking(newBookingDTO);
@@ -71,12 +77,23 @@ public class BookingService {
         return State.<Void, String>builder().forSuccess();
     }
 
+    /**
+     * Checks the date availability for a specific listing.
+     *
+     * @param publicId UUID of the listing to check
+     * @return List of booked dates
+     */
     @Transactional(readOnly = true)
     public List<BookedDateDTO> checkAvailability(UUID publicId) {
         return bookingRepository.findAllByFkListing(publicId)
                 .stream().map(bookingMapper::bookingToCheckAvailability).toList();
     }
 
+    /**
+     * Gets the list of bookings made by the authenticated user.
+     *
+     * @return List of the user's bookings
+     */
     @Transactional(readOnly = true)
     public List<BookedListingDTO> getBookedListing() {
         ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSecurityContext();
@@ -101,6 +118,14 @@ public class BookingService {
         }).toList();
     }
 
+        /**
+         * Cancels a specific booking.
+         *
+         * @param bookingPublicId UUID of the booking to cancel
+         * @param listingPublicId UUID of the associated listing
+         * @param byLandlord indicates if the cancellation is performed by the landlord
+         * @return State of the operation, with success or error message
+         */
     @Transactional
     public State<UUID, String> cancel(UUID bookingPublicId, UUID listingPublicId, boolean byLandlord) {
         ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSecurityContext();
@@ -128,6 +153,11 @@ public class BookingService {
         return deleteSuccess;
     }
 
+    /**
+     * Gets the list of bookings for the authenticated landlord.
+     *
+     * @return List of bookings for the landlord's properties
+     */
     @Transactional(readOnly = true)
     public List<BookedListingDTO> getBookedListingForLandlord() {
         ReadUserDTO connectedUser = userService.getAuthenticatedUserFromSecurityContext();
@@ -137,6 +167,13 @@ public class BookingService {
         return mapBookingToBookedListing(allBookings, allProperties);
     }
 
+    /**
+     * Finds the listing IDs that have bookings matching a given date range.
+     *
+     * @param listingsId List of listing UUIDs
+     * @param bookedDateDTO DTO with the date range to search
+     * @return List of listing UUIDs that have bookings in that range
+     */
     public List<UUID> getBookingMatchByListingIdsAndBookedDate(List<UUID> listingsId, BookedDateDTO bookedDateDTO) {
         return bookingRepository.findAllMatchWithDate(listingsId, bookedDateDTO.startDate(), bookedDateDTO.endDate())
                 .stream().map(Booking::getFkListing).toList();
